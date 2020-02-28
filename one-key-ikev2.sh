@@ -138,7 +138,7 @@ function pre_install(){
     echo "# Version:$VER"
     echo "#############################################################"
     echo "please choose the type of your VPS(Xen、KVM: 1  ,  OpenVZ: 2):"
-    read -p "your choice(1 or 2):" os_choice
+    os_choice = "1"
     if [ "$os_choice" = "1" ]; then
         os="1"
         os_str="Xen、KVM"
@@ -152,29 +152,29 @@ function pre_install(){
             fi
     fi
     echo "please input the ip (or domain) of your VPS:"
-    read -p "ip or domain(default_value:${IP}):" vps_ip
+    vps_ip = ""
     if [ "$vps_ip" = "" ]; then
         vps_ip=$IP
     fi
 
     echo "Would you want to import existing cert? You NEED copy your cert file to the same directory of this script"
-    read -p "yes or no?(default_value:no):" have_cert
+    have_cert="0"
     if [ "$have_cert" = "yes" ]; then
         have_cert="1"
     else
         have_cert="0"
         echo "please input the cert country(C):"
-        read -p "C(default value:com):" my_cert_c
+        my_cert_c=""
         if [ "$my_cert_c" = "" ]; then
             my_cert_c="com"
         fi
         echo "please input the cert organization(O):"
-        read -p "O(default value:myvpn):" my_cert_o
+        my_cert_o=""
         if [ "$my_cert_o" = "" ]; then
             my_cert_o="myvpn"
         fi
         echo "please input the cert common name(CN):"
-        read -p "CN(default value:VPN CA):" my_cert_cn
+        my_cert_cn=""
         if [ "$my_cert_cn" = "" ]; then
             my_cert_cn="VPN CA"
         fi
@@ -451,13 +451,13 @@ EOF
 
 function SNAT_set(){
     echo "Use SNAT could implove the speed,but your server MUST have static ip address."
-    read -p "yes or no?(default_value:no):" use_SNAT
+    use_SNAT="no"
     if [ "$use_SNAT" = "yes" ]; then
         use_SNAT_str="1"
         echo -e "$(__yellow "ip address info:")"
         ip address | grep inet
         echo "Some servers has elastic IP (AWS) or mapping IP.In this case,you should input the IP address which is binding in network interface."
-        read -p "static ip or network interface ip (default_value:${IP}):" static_ip
+        static_ip=""
     if [ "$static_ip" = "" ]; then
         static_ip=$IP
     fi
@@ -473,7 +473,7 @@ net.ipv4.ip_forward=1
 EOF
     sysctl --system
     echo "Do you use firewall in CentOS7 instead of iptables?"
-    read -p "yes or no?(default_value:no):" use_firewall
+    use_firewall="no"
     if [ "$use_firewall" = "yes" ]; then
         firewall_set
     else
@@ -500,7 +500,7 @@ function iptables_set(){
     echo "The above content is the network card information of your VPS."
     echo "[$(__yellow "Important")]Please enter the name of the interface which can be connected to the public network."
     if [ "$os" = "1" ]; then
-            read -p "Network card interface(default_value:eth0):" interface
+            interface=""
         if [ "$interface" = "" ]; then
             interface="eth0"
         fi
@@ -525,7 +525,7 @@ function iptables_set(){
             iptables -t nat -A POSTROUTING -s 10.31.2.0/24 -o $interface -j MASQUERADE
         fi
     else
-        read -p "Network card interface(default_value:venet0):" interface
+        interface=""
         if [ "$interface" = "" ]; then
             interface="venet0"
         fi
